@@ -39,7 +39,13 @@
 \newcommand{\rnum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
 
 % Гиперссылки
-\usepackage[hidelinks]{hyperref}
+\usepackage{hyperref}
+\hypersetup{
+    frenchlinks=true,
+    linktocpage=true,
+}
+
+\urlstyle{same}
 
 % Цвета
 \usepackage{xcolor}
@@ -212,6 +218,7 @@
     }{
     \par\smallskip
 }
+
 % Оболочка для упражнения
 \newcounter{problem}
 \newenvironment{problem}[1][]{\par\smallskip
