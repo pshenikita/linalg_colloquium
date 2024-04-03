@@ -5,10 +5,10 @@
     $
     J_\lambda =
     \begin{pmatrix}
-        \lambda & 1 & & 0\\
+        \lambda & 1 & & \\
          & \lambda & \ddots & \\
          & & \ddots & 1 \\
-        0 & & & \lambda
+         & & & \lambda
     \end{pmatrix}
     $ называется \textit{жордановой клеткой}. Если матрица оператора $\A$ в некотором базисе является блочно-диагональной с блоками вида $J_\lambda$ (возможно, соответствующих различным $\lambda$), то такая матрица называется \textit{жордановой нормальной формой} оператора $\A$. Базис, в котором оператор имеет жорданову нормальную форму, называется \textit{жордановым}.
 \end{definition}
@@ -29,7 +29,262 @@
     Докажите, что матрица коммутирует только с многочленами от себя тогда и только тогда, когда её минимальный многочлен совпадает с характеристическим.
 \end{problem}
 
+Нам понадобятся три очень технические леммы.
+
+\begin{lemma}[Костя Зюбин]
+    Пусть у жордановой матрицы $A$ минимальный многочлен совпадает с характеристическим. Тогда диагональ $A$ является многочленом от неё.
+\end{lemma}
+
+\begin{proof}
+    Т.\,к. минимальный многочлен совпал с характеристическим, то каждому уникальному собственному значению $\lambda_i$ соответствует ровно одна клетка (из предложения 1), т.\,е. матрица выглядит вот так:
+    \[
+        A =
+        \begin{pmatrix}
+            J_1 & & \\
+             & \ddots & \\
+             & & J_m
+        \end{pmatrix},
+    \]
+    где $J_i$ --- жорданова клетка размером $m_i$ с собственным значением $\lambda_i$, причём все такие $\lambda_i$ попарно различны. Рассмотрим многочлен $\ds g_i(t) \vcentcolon = \frac{\chi_A(t)}{(t - \lambda_i)^{m_i}}$. Этот многочлен, как нетрудно заметить, будет аннулировать все клетки, кроме $J_i$. Это значит, что
+    \[
+        g_i(A) =
+        \begin{pmatrix}
+            g_i(J_i) & \\
+             & \scalebox{2}{$0$}
+        \end{pmatrix}
+    \]
+    (условно будем рисовать клетку в верхнем левом углу). Пусть $\mu_{G_i}(t)$ --- минимальный многочлен матрицы $G_i = g_i(J_i)$ и $\lambda_i \ne 0$ (мы потом отдельно рассмотрим случай вырожденных клеток). Тогда свободный член $\mu_{G_i}(t)$ не равен нулю. Действительно, в противном случае $\mu_{G_i}(t) = q_{G_i}(t) \cdot t \Rightarrow q_{G_i}(G_i)G_i = 0 \Rightarrow q_{G_i}(G_i) = 0 G_i^{-1} = 0$, причём $\deg q_{G_i} < \deg \mu_{G_i}$ --- противоречие. Теперь будем строить искомый многочлен в несколько шагов:
+    \[
+        \mu_{G_i}(g_i(A)) =
+        \left(
+        \begin{array}{c | c}
+            0 & \\
+            \hline
+             & \mu_{G_i}(0)E
+        \end{array}
+        \right)
+    \]
+    \[
+        \mu_{G_i}(g_i(A)) - \mu_{G_i}(0)E =
+        \left(
+        \begin{array}{c | c}
+            -\mu_{G_i}(0)E & \\
+            \hline
+             & 0
+        \end{array}
+        \right)
+    \]
+    \[
+        \lambda_iE - \frac{\lambda_i}{\mu_{G_i}(0)}\mu_{G_i}(g_i(A)) =
+        \left(
+        \begin{array}{c | c}
+            \lambda_iE & \\
+            \hline
+             & 0
+        \end{array}
+        \right).
+    \]
+
+    И вот отсюда
+    \[
+        \br{\sum_i\lambda_i}E - \sum_{\lambda_i \ne 0}\frac{\lambda_i}{\mu_{G_i}(0)} \cdot \mu_{G_i}(g_i(A)) =
+        \begin{pmatrix}
+            \fbox{$\lambda_1E$} & & & \\
+             & \fbox{$\lambda_2E$} & &\\
+             & & \ddots &\\
+             & & & \fbox{$\lambda_mE$}
+        \end{pmatrix}.
+    \]
+
+    А теперь заметим, что при $\lambda_j = 0$ в получившейся матрице $j$-ый блок будет нулевой матрицей (там будет стоять пустая сумма), а ровно этого и хотелось. Так что найденный нами многочлен переводит $A$ в её диагональ.
+\end{proof}
+
+\begin{lemma}
+    С матрицей $D = \operatorname{diag}(\overbrace{\lambda_1, \ldots, \lambda_1}^{m_1}, \overbrace{\lambda_2, \ldots, \lambda_2}^{m_2}, \cdots, \overbrace{\lambda_k, \ldots, \lambda_k}^{m_k})$ коммутируют такие и только такие матрицы:
+    \[
+        \begin{pmatrix}
+            B_1 & & \\
+             & \ddots & \\
+             & & B_k
+        \end{pmatrix},
+    \]
+    где $B_i$ --- блоки размера $k_i$.
+\end{lemma}
+
+\begin{proof}
+    То, что такие коммутируют, очевидно (проверяется непосредственно). Докажем, что коммутируют только такие. Пусть $B$ коммутирует с $D$. Тогда умножив $D$ на $B$ слева, мы каждую строку $B$ домножим на соответствующий коэффициент. А умножив $D$ на $B$ справа, мы каждый столбец умножим на соответствующий коэффициент. Итак, получаем:
+    \begin{multline*}
+        \footnotesize
+        \begin{pmatrix}
+            \lambda_1b_{11} & \ldots & \lambda_1b_{1m_1} & \lambda_1b_{1, m_1 + 1} & \ldots & \lambda_1b_{1, m_1 + m_2} & \ldots & \lambda_1b_{1n}\\
+            \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \ddots & \vdots\\
+            \lambda_1b_{m_11} & \ldots & \lambda_1b_{m_1m_1} & \lambda_1b_{m_1, m_1 + 1} & \ldots & \lambda_1b_{m_1, m_1 + m_2} & \ldots & \lambda_1b_{m_1n}\\
+            \lambda_2b_{m_1 + 1, 1} & \ldots & \lambda_2b_{m_1 + 1, m_1} & \lambda_2b_{m_1 + 1, m_1 + 1} & \ldots & \lambda_2b_{m_1 + 1, m_1 + m_2} & \ldots & \lambda_2b_{m_1 + 1, n}\\
+            \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \ddots & \vdots\\
+            \lambda_2b_{m_1 + m_2, 1} & \ldots & \lambda_2b_{m_1 + m_2, m_1} & \lambda_2b_{m_1 + m_2, m_1 + 1} & \ldots & \lambda_2b_{m_1 + m_2, m_1 + m_2} & \ldots & \lambda_2b_{m_1 + m_2, n}\\
+            \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \ddots & \vdots\\
+            \lambda_kb_{n1} & \ldots & \lambda_kb_{nm_1} & \lambda_kb_{n, m_1 + 1} & \ldots & \lambda_kb_{n, m_1 + m_2} & \ldots & \lambda_kb_{nn}\\
+        \end{pmatrix} =\\ =\footnotesize
+        \begin{pmatrix}
+            \lambda_1b_{11} & \ldots & \lambda_1b_{1m_1} & \lambda_2b_{1, m_1 + 1} & \ldots & \lambda_2b_{1, m_1 + m_2} & \ldots & \lambda_kb_{1n}\\
+            \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \ddots & \vdots\\
+            \lambda_1b_{m_11} & \ldots & \lambda_1b_{m_1m_1} & \lambda_2b_{m_1, m_1 + 1} & \ldots & \lambda_2b_{m_1, m_1 + m_2} & \ldots & \lambda_kb_{m_1n}\\
+            \lambda_1b_{m_1 + 1, 1} & \ldots & \lambda_1b_{m_1 + 1, m_1} & \lambda_2b_{m_1 + 1, m_1 + 1} & \ldots & \lambda_2b_{m_1 + 1, m_1 + m_2} & \ldots & \lambda_kb_{m_1 + 1, n}\\
+            \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \ddots & \vdots\\
+            \lambda_1b_{m_1 + m_2, 1} & \ldots & \lambda_1b_{m_1 + m_2, m_1} & \lambda_2b_{m_1 + m_2, m_1 + 1} & \ldots & \lambda_2b_{m_1 + m_2, m_1 + m_2} & \ldots & \lambda_kb_{m_1 + m_2, n}\\
+            \vdots & \ddots & \vdots & \vdots & \ddots & \vdots & \ddots & \vdots\\
+            \lambda_1b_{n1} & \ldots & \lambda_1b_{nm_1} & \lambda_2b_{n, m_1 + 1} & \ldots & \lambda_2b_{n, m_1 + m_2} & \ldots & \lambda_kb_{nn}\\
+        \end{pmatrix}.
+    \end{multline*}
+
+    Осталось приравнять элементы на соответствующих местах. Взглянем на левые верхние подматрицы $m_1 \times m_1$. Они совпадают у обеих матриц. Затем взглянем на подматрицу $M^{i = m_1 + 1, \ldots, m_1 + m_2}_{j = m_1 + 1, \ldots, m_1 + m_2}$. Они тоже совпадают! И так далее. Причём, как нетрудно увидеть, совпадают в этих матрицах только эти блоки. Получили то, что хотели.
+\end{proof}
+
+\begin{lemma}
+    С жордановыми клетками коммутируют только многочлены от них\footnotemark.
+\end{lemma}
+
+\footnotetext{Имеется в виду <<они и только они>>. Однако то, что матрица коммутирует с многочленами от себя, очевидно. Нам интересен именно тот случай, когда других коммутирующих нет.}
+
+\begin{proof}
+    Давайте проверим. Пусть
+    $
+    J_\lambda =
+    \begin{pmatrix}
+        \lambda & 1 & & 0\\
+         & \lambda & \ddots & \\
+         & & \ddots & 1 \\
+        0 & & & \lambda
+    \end{pmatrix}
+    $ коммутирует с матрицей $B = (b^i_j)$. Перемножим их с обеих сторон:
+    \[
+    \begin{pmatrix}
+        \lambda & 1 & & \\
+         & \lambda & \ddots & \\
+         & & \ddots & 1 \\
+         & & & \lambda
+    \end{pmatrix} \cdot
+    \begin{pmatrix}
+        b_{11} & b_{12} & \ldots & b_{1n}\\
+        b_{21} & b_{22} & \ldots & b_{2n}\\
+        \vdots & \vdots & \ddots & \vdots\\
+        b_{n1} & b_{n2} & \ldots & b_{nn}\\
+    \end{pmatrix} =
+    \begin{pmatrix}
+        \lambda b_{11} + b_{21} & \lambda b_{12} + b_{22} & \ldots & \lambda b_{1n} + b_{2n}\\
+        \lambda b_{21} + b_{31} & \lambda b_{22} + b_{32} & \ldots & \lambda b_{2n} + b_{3n}\\
+        \vdots & \vdots & \ddots & \vdots\\
+        \lambda b_{n - 1, 1} + b_{n1} & \lambda b_{n - 1, 2} + b_{n2} & \ldots & \lambda b_{n - 1, n} + b_{nn}\\
+        \lambda b_{n1} & \lambda b_{n2} & \ldots & \lambda b_{nn}\\
+    \end{pmatrix}
+    \]
+    \[
+    \begin{pmatrix}
+        b_{11} & b_{12} & \ldots & b_{1n}\\
+        b_{21} & b_{22} & \ldots & b_{2n}\\
+        \vdots & \vdots & \ddots & \vdots\\
+        b_{n1} & b_{n2} & \ldots & b_{nn}\\
+    \end{pmatrix} \cdot
+    \begin{pmatrix}
+        \lambda & 1 & & \\
+         & \lambda & \ddots & \\
+         & & \ddots & 1 \\
+         & & & \lambda
+    \end{pmatrix} =
+    \begin{pmatrix}
+        \lambda b_{11} & b_{11} + \lambda b_{12} & \ldots & b_{1, n - 1} + \lambda b_{1n}\\
+        \lambda b_{21} & b_{21} + \lambda b_{22} & \ldots & b_{2, n - 1} + \lambda b_{2n}\\
+        \vdots & \vdots & \ddots & \vdots\\
+        \lambda b_{n1} & b_{n1} + \lambda b_{n2} & \ldots & b_{n, n - 1} + \lambda b_{nn}\\
+    \end{pmatrix}.
+    \]
+
+    Теперь приравняем соответствующие элементы получившихся матриц. Из первого столбца, $b_{i1} = 0$, $i = 2, \ldots, n$. Теперь, из второго столбца, $b_{i2} = 0$, $i = 3, \ldots, n$. И так далее. Получаем, что матрица $B$ верхнетреугольная. Но это не всё, что можно про неё сказать. Приравняем клетки с координатами $(1, 2)$, получим $b_{11} + \lambda b_{12} = \lambda b_{12} + b_{22} \Rightarrow b_{11} = b_{22}$. Теперь, приравняв клетки с координатами $(2, 3)$, аналогично получим $b_{22} = b_{33}$. И так далее. Получаем, что $b_{11} = \ldots = b_{nn}$. Это мы приравняли диагональ на одну выше главной. Потом приравниваем диагонали ещё на одну выше, и ещё, и т.\,д. Получаем, что матрица $B$ имеет вид:
+    \[
+        B =
+        \begin{pmatrix}
+            b_0 & b_1 & \ddots & b_{n - 2} & b_{n - 1}\\
+                & b_0 & b_1 & \ddots & b_{n - 2}\\
+                &     & b_0    & \ddots & \ddots\\
+                &     &        & \ddots & b_1\\
+                &     &        &        & b_0\\
+        \end{pmatrix}.
+    \]
+    Или же, $B = b_0 + b_1N + b_2N^2 + \ldots + b_{n - 1}N^{n - 1}$, где $N = A - \lambda E$ --- нильпотентный оператор. А т.\,к. $B$ --- многочлен от $A - \lambda E$, то это и многочлен от $A$ (подставить, раскрыть скобки).
+\end{proof}
+
 \begin{solution}
-    Напишу позже. % TODO: написать решение
+    $\Leftarrow$. Пусть $\chi_A(t) = \mu_A(t)$ и $BA = AB$. По лемме 1, диагональ $A$ --- это некоторый многочлен от $A$, поэтому $B$ коммутирует и с диагональю $A$. А значит, по лемме 2, матрица $B$ имеет блочно-диагональный вид с блоками, равными по размерам жордановым клеткам матрицы $A$. Коммутирование такой матрицы с жордановой матрицей $A$ равносильно коммутированию соответствующих блоков матрицы $B$ с жордановыми клетками $A$. Значит, матрица $B$ имеет вид
+    \[
+        B =
+        \begin{pmatrix}
+            g_1(J_1) & & \\
+             & \ddots & \\
+             & & g_m(J_m)
+        \end{pmatrix},
+    \]
+    где $g_i$ --- многочлены. Осталось из этих многочленов, которые жордановы клетки $A$ переводит в блоки $B$ собрать единый многочлен $f$, который всю матрицу $A$ переведёт во всю матрицу $B$. Для каждого $i$ положим $p_i(t) = \prod\limits_{j \ne i}(t - \lambda_j)^{m_j}$. Т.\,к. все $\lambda_i$ различны, $\gcd(p_i, (x - \lambda_i)^{m_i}) = 1$. Поэтому существуют такие многочлены $a_i$ и $b_i$, что $a_i(t)p_i(t) + b_i(t)(t - \lambda_i)^{m_i} = 1$. Отсюда $(a_ip_i)(J_{j})$ равняется $\underset{m_i \times m_i}{E}$ при $j = i$ и $0$ при $j \ne i$. Отсюда
+    \[
+        (a_ip_ig_i)(A) =
+        \begin{pmatrix}
+            (a_ip_ig_i)(J_1) & & \\
+             & \ddots & \\
+             & & (a_ip_ig_i)(J_m)
+        \end{pmatrix} = 
+        \begin{pmatrix}
+            0 & & \\
+            & E \cdot g_i(J_i) & \\
+             & & 0\\
+        \end{pmatrix} =
+        \begin{pmatrix}
+            0 & & \\
+            & g_i(J_i) & \\
+             & & 0\\
+        \end{pmatrix}
+    \]
+    где $g_i(J_i)$ стоит на месте $i$-го блока. Наконец, $B = \sum\limits_{i = 1}^r(a_ip_ig_i)(A)$.
+
+    $\Rightarrow$. Пусть у матрицы $A$ характеристический многочлен не равен минимальному. Тогда у неё какому-то собственному значению $\lambda$ соответствуют (хотя бы) две клетки. Понятно, что без ограничения общности можно рассматривать случай
+    $
+    J =
+    \begin{pmatrix}
+        J_1 & \\
+         & J_2
+    \end{pmatrix}
+    $, где $J$ --- жорданова форма матрицы $A$, а $J_1$ и $J_2$ --- жордановы клетки размера $m_1$ и $m_2$ соответственно с собственным значением $\lambda$ на диагонали. Пусть $J = P^{-1}AP$ и $D = \operatorname{diag}(\underbrace{1, \ldots, 1}_{m_1}, \underbrace{0, \ldots, 0}_{m_2})$. Тогда
+    \[
+        PDP^{-1} \cdot A = PDJP^{-1},\qquad A \cdot PDP^{-1} = PJDP^{-1}.
+    \]
+
+    А по лемме 2 матрицы $J$ и $D$ коммутируют, т.\,е. $DJ = JD$. Отсюда $PDP^{-1} \cdot A = A \cdot PDP^{-1}$, т.\,е. $A$ и $PDP^{-1}$ коммутируют. Предположим, что $PDP^{-1} = f(A)$, где $f$ --- многочлен. Тогда
+    \[
+        \begin{pmatrix}
+            1 &  &  &  \\
+             & \ddots &  & \\
+             & & 1 & \\
+             & & & \bigzero\\
+        \end{pmatrix} =
+        D = P^{-1}f(A)P = f(P^{-1}AP) = f(J).
+    \]
+
+    Теперь воспользуемся результатом задачи 1202 из <<Сборника задач по аналитической геометрии и линейной алгебре>> под ред. Смирнова. Утверждение этой задачи заключается в том, что
+    \[
+        f(J_i) =
+        \begin{pmatrix}
+            \ds f(\lambda) & \ds\frac{f^\prime(\lambda)}{1!} & \ds\frac{f^{\prime\prime}(\lambda)}{2!} & \ds\frac{f^{\prime\prime\prime}(\lambda)}{3!} & \ldots & \ds\frac{f^{(n - 1)}(\lambda)}{(n - 1)!}\\
+            0 & \ds f(\lambda) & \ds\frac{f^\prime(\lambda)}{1!} & \ds\frac{f^{\prime\prime}(\lambda)}{2!} & \ldots & \ds\frac{f^{(n - 2)}(\lambda)}{(n - 2)!}\\
+            \vdots & \vdots & \vdots & \vdots & \vdots & \vdots\\
+            0 & 0 & 0 & 0 & \ldots & f(\lambda)
+        \end{pmatrix}.
+    \]
+
+    А т.\,к. на диагоналях $J_1$ и $J_2$ собственные значения одинаковые, то на диагонали матрицы
+    $
+    f(J) =
+    \begin{pmatrix}
+        f(J_1) & \\
+         & f(J_2)
+    \end{pmatrix}
+    $ должны стоять одинаковые числа, а для $D$ это условие не выполняется.
 \end{solution}
 
